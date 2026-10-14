@@ -9,7 +9,7 @@ name: Sync site from hosting
 
 on:
   schedule:
-    - cron: "9,39 * * * *"   # 【可改】UTC 时间，每小时第 9、39 分（北京时间相同分钟）
+    - cron: "49 * * * *"   # 每小时第 49 分（UTC）。三站错峰：weget 9 分 / soft 29 分 / bizhi 49 分，任意时刻仅一站拉取主机 FTP
   workflow_dispatch: {}       # 允许在 Actions 页手动触发
 
 concurrency:
