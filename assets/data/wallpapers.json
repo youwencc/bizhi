@@ -1,0 +1,83 @@
+{
+    "version": 1791982499,
+    "categories": [
+        {
+            "key": "anime",
+            "label": "动漫"
+        },
+        {
+            "key": "nature",
+            "label": "自然"
+        },
+        {
+            "key": "minimal",
+            "label": "极简"
+        },
+        {
+            "key": "city",
+            "label": "城市"
+        },
+        {
+            "key": "abstract",
+            "label": "抽象"
+        },
+        {
+            "key": "animal",
+            "label": "动物"
+        },
+        {
+            "key": "dark",
+            "label": "暗黑"
+        }
+    ],
+    "wallpapers": [
+        {
+            "id": 1,
+            "title": "暮色山谷",
+            "category": "nature",
+            "resolution": "1440×3200",
+            "seed": "wp-dusk-valley",
+            "image": "",
+            "description": "层叠山峦在暮色中渐暗，适合深色模式手机屏幕。",
+            "downloads": {
+                "phone": "",
+                "tablet": "",
+                "desktop": ""
+            },
+            "downloads_text": "8.2万",
+            "page_url": "/wallpaper/1.html"
+        },
+        {
+            "id": 2,
+            "title": "霓虹夜城",
+            "category": "city",
+            "resolution": "1080×2400",
+            "seed": "wp-neon-city",
+            "image": "",
+            "description": "雨后街道映着霓虹灯牌，赛博感十足。",
+            "downloads": {
+                "phone": "",
+                "tablet": "",
+                "desktop": ""
+            },
+            "downloads_text": "12.4万",
+            "page_url": "/wallpaper/2.html"
+        },
+        {
+            "id": 3,
+            "title": "极简留白",
+            "category": "minimal",
+            "resolution": "1080×2400",
+            "seed": "wp-minimal-blank",
+            "image": "",
+            "description": "大面积留白配一枚小图标，通知栏更清爽。",
+            "downloads": {
+                "phone": "",
+                "tablet": "",
+                "desktop": ""
+            },
+            "downloads_text": "5.6万",
+            "page_url": "/wallpaper/3.html"
+        }
+    ]
+}

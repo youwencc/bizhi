@@ -1,0 +1,128 @@
+# ============================================================
+# 虚拟主机 → GitHub 定时同步（模板来自《虚拟主机-GitHub同步-通用模板与踩坑指南.md》）
+# 本项目改动点（仅 3 处，其余保持模板原样）：
+#   1. --exclude='admin/'      ：PHP+MySQL 后台目录，绝不进入公开仓库
+#   2. 安全阀 3                ：download.html 必须存在 + 数据 JSON 必须可解析
+#   3. 安全阀 3 补充           ：uploads 上传目录与 assets/data 数据文件纳入完整性预期
+# ============================================================
+name: Sync site from hosting
+
+on:
+  schedule:
+    - cron: "9,39 * * * *"   # 【可改】UTC 时间，每小时第 9、39 分（北京时间相同分钟）
+  workflow_dispatch: {}       # 允许在 Actions 页手动触发
+
+concurrency:
+  group: ftp-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write             # 必须有，否则无法提交推送
+
+env:
+  FTP_HOST: ${{ secrets.FTP_HOST }}
+  FTP_DIR: ${{ secrets.FTP_DIR }}
+  # ★ 铁律：FTP 镜像必须放在 runner 临时目录，绝不能放在仓库内部
+  #   （放仓库内部会被下面 rsync --delete 当作"仓库多余内容"删掉，见指南坑 6）
+  MIRROR: /tmp/ftpmirror
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5   # v4 会报 Node 20 弃用警告
+
+      - name: Pull site from hosting (FTP mirror)
+        env:
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp   # ubuntu-latest 不预装 lftp
+          rm -rf "$MIRROR" && mkdir -p "$MIRROR"
+          set -o pipefail
+          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" <<EOF | tee /tmp/ftp.log
+          set net:max-retries 2
+          set net:timeout 30
+          set ftp:ssl-allow no
+          # 限速避免触发主机防护；串行避免触发主机 FTP 连接数限制（两者都是真实踩过的坑）
+          set net:limit-rate 2097152
+          # ★ 不用 --delete、不用 --parallel，原因见指南坑 4 和坑 5
+          mirror --no-perms --verbose=1 "$FTP_DIR" "$MIRROR"
+          bye
+          EOF
+          echo "下载完成，镜像文件数: $(find "$MIRROR" -type f | wc -l)"
+
+      # 失败时把诊断信息（不含密码）打印到运行页顶部 Summary
+      - name: Diagnose FTP failure
+        if: failure()
+        env:
+          FTP_USER: ${{ secrets.FTP_USER }}
+        run: |
+          {
+            echo "## 同步失败诊断"
+            echo "- FTP_HOST=\`$FTP_HOST\`  FTP_DIR=\`$FTP_DIR\`  FTP_USER=\`$FTP_USER\`"
+            echo "- 磁盘剩余：$(df -h /home/runner/work | tail -1)"
+            echo "- 镜像文件数：$(find "$MIRROR" -type f 2>/dev/null | wc -l)"
+            echo "- 拉取日志关键行："
+            echo '```'
+            grep -iaE '530|login|550|421|425|timed? ?out|not found|failed|error|refused|denied|ssl|tls' /tmp/ftp.log | tail -20 || echo "(无匹配)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 安全阀 1：拉取为空 = FTP 路径/账号错，绝不能继续（否则会把仓库清空推上去）
+      - name: Verify mirror is not empty
+        run: |
+          if [ -z "$(ls -A "$MIRROR")" ]; then
+            echo "::error::FTP 拉取结果为空：请检查 Secrets"
+            exit 1
+          fi
+          echo "拉取文件数: $(find "$MIRROR" -type f | wc -l)"
+
+      # 白名单：只放行静态扩展名；php/配置/备份一律挡住（admin/ 双重保险显式排除）。
+      - name: Sync into repo (static whitelist only)
+        run: |
+          rc=0
+          for i in 1 2 3; do
+            if rsync -a --delete \
+              --exclude='admin/' \
+              --exclude='.git/' --exclude='.github/' --exclude='tools/' \
+              --exclude='CNAME' --exclude='.gitignore' \
+              --include='*/' \
+              --include='*.html' --include='*.htm' --include='*.shtml' \
+              --include='*.css' --include='*.js' --include='*.mjs' --include='*.map' \
+              --include='*.json' --include='*.xml' --include='*.txt' \
+              --include='*.jpg' --include='*.jpeg' --include='*.png' --include='*.gif' \
+              --include='*.webp' --include='*.svg' --include='*.ico' --include='*.bmp' --include='*.avif' \
+              --include='*.woff' --include='*.woff2' --include='*.ttf' --include='*.otf' --include='*.eot' \
+              --include='*.mp4' --include='*.webm' --include='*.mp3' --include='*.ogg' --include='*.wav' --include='*.m4a' \
+              --include='*.pdf' --include='*.csv' \
+              --exclude='*' \
+              "$MIRROR/" ./
+            then rc=0; break; fi
+            rc=$?
+            if [ "$rc" -ne 24 ]; then break; fi   # 24=个别文件消失，重试兜底
+            echo "第 $i 次 rsync 出现文件 vanished（code 24），重试..."
+          done
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 24 ]; then exit "$rc"; fi
+          # 安全阀 2：仓库必须存在站点首页，否则视为远程异常
+          test -f index.html || { echo "::error::同步后仓库中没有 index.html，已中止提交"; exit 1; }
+          # 安全阀 3（本项目）：下载页必须存在（前台双页面架构）
+          test -f download.html || { echo "::error::同步后仓库中缺少 download.html，已中止提交"; exit 1; }
+          # 安全阀 3（本项目）：后台发布的两个数据文件必须存在且为合法 JSON
+          for jf in assets/data/wallpapers.json assets/data/site.json; do
+            test -f "$jf" || { echo "::error::缺少 $jf（主机端后台是否已执行 install.php？）"; exit 1; }
+            python3 -m json.tool "$jf" >/dev/null 2>&1 || { echo "::error::$jf 不是合法 JSON，已中止提交"; exit 1; }
+          done
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "网站内容与仓库一致，本次无需更新"
+          else
+            git commit -m "sync: 自动同步虚拟主机网站内容 $(TZ=Asia/Shanghai date +'%F %T')"
+            git push
+          fi

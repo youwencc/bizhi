@@ -1,0 +1,84 @@
+{
+    "analytics": "",
+    "download_description": "免费下载高清手机壁纸《{title}》，支持手机 / 平板 / 桌面多设备多分辨率选择，1080P、2K、4K 一键保存。",
+    "download_title_template": "{title} - 高清手机壁纸下载 | WallGallery",
+    "enable_desktop": "0",
+    "enable_tablet": "0",
+    "footer_text": "© 2026 Weget.site · 精选手机壁纸",
+    "home_description": "精选高清手机壁纸免费下载：动漫、自然、极简、城市、抽象、动物、暗黑等多种分类，支持 1080P / 2K / 4K 多规格一键保存。",
+    "home_keywords": "手机壁纸,高清壁纸,壁纸下载,动漫壁纸,全面屏壁纸,iPhone壁纸,4K壁纸,壁纸站",
+    "home_title": "WallGallery · 手机壁纸精选 - 高清手机壁纸免费在线下载",
+    "icp": "",
+    "logo_emoji": "📱",
+    "site_name": "WallGallery",
+    "site_url": "https://weget.site",
+    "sizes": {
+        "phone": [
+            {
+                "label": "1080 × 1920",
+                "w": 1080,
+                "h": 1920,
+                "tag": "FHD"
+            },
+            {
+                "label": "1080 × 2400",
+                "w": 1080,
+                "h": 2400,
+                "tag": "全面屏"
+            },
+            {
+                "label": "1284 × 2778",
+                "w": 1284,
+                "h": 2778,
+                "tag": "iPhone"
+            },
+            {
+                "label": "1440 × 3200",
+                "w": 1440,
+                "h": 3200,
+                "tag": "2K 超清"
+            }
+        ],
+        "tablet": [
+            {
+                "label": "1536 × 2048",
+                "w": 1536,
+                "h": 2048,
+                "tag": "标准"
+            },
+            {
+                "label": "1668 × 2388",
+                "w": 1668,
+                "h": 2388,
+                "tag": "iPad Pro"
+            },
+            {
+                "label": "2048 × 2732",
+                "w": 2048,
+                "h": 2732,
+                "tag": "2K 超清"
+            }
+        ],
+        "desktop": [
+            {
+                "label": "1920 × 1080",
+                "w": 1920,
+                "h": 1080,
+                "tag": "FHD"
+            },
+            {
+                "label": "2560 × 1440",
+                "w": 2560,
+                "h": 1440,
+                "tag": "2K"
+            },
+            {
+                "label": "3840 × 2160",
+                "w": 3840,
+                "h": 2160,
+                "tag": "4K"
+            }
+        ]
+    },
+    "version": "1"
+}

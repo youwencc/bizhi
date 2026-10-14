@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- 下载页：独立 URL（download.html?id=壁纸ID）
+     默认 SEO 为保底值；JS 定位到具体壁纸后用后台模板覆盖 title/description/OG -->
+<title>壁纸下载 - WallGallery</title>
+<meta name="description" content="免费下载高清手机壁纸，支持手机 / 平板 / 桌面多设备多分辨率选择。">
+<meta name="keywords" content="手机壁纸,高清壁纸,壁纸下载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="壁纸下载 - WallGallery">
+<meta property="og:description" content="免费下载高清手机壁纸，多分辨率一键保存。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B1%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/common.css">
+<link rel="stylesheet" href="assets/css/download.css">
+</head>
+<body>
+
+<!-- 头部（返回 + 品牌 + 收藏/分享）与页脚由 common.js 注入 -->
+<div id="appHeader"></div>
+
+<main class="detail-layout" id="detailMain">
+    <div class="detail-hero">
+        <!-- 设备边框实机演示（手机/平板/显示器，随下方设备 Tab 切换） -->
+        <div class="phone-mockup">
+            <div class="phone-screen">
+                <img class="hero-img" id="detailImage" src="" alt="壁纸预览">
+                <div class="phone-status">
+                    <span id="phoneTime">9:41</span>
+                    <span class="phone-battery"></span>
+                </div>
+            </div>
+            <div class="phone-island"></div>
+            <div class="phone-home-bar"></div>
+            <div class="phone-stand"></div>
+        </div>
+    </div>
+
+    <div class="detail-content">
+
+        <div class="detail-info">
+            <h2 id="detailTitle">—</h2>
+            <div class="detail-tags" id="detailTags"></div>
+            <p class="detail-desc" id="detailDesc" hidden></p>
+            <div class="detail-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="statSize">—</div>
+                    <div class="stat-label">当前选中尺寸</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">JPG</div>
+                    <div class="stat-label">图片格式</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statDownloads">—</div>
+                    <div class="stat-label">累计下载</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-panel">
+            <div class="panel-title">⬇️ 选择下载规格</div>
+            <div class="panel-sub">根据你的设备选择合适的分辨率</div>
+
+            <!-- 设备 Tab：手机固定；平板/桌面由 JS 按后台开关决定是否显示 -->
+            <div class="device-tabs" id="deviceTabs">
+                <button class="device-tab active" data-device="phone">📱 手机</button>
+            </div>
+
+            <div class="size-options" id="sizeOptions"></div>
+
+            <button class="download-btn" id="downloadBtn">
+                <div class="dl-progress" id="dlProgress"></div>
+                <span class="dl-icon" id="dlIcon">⬇</span>
+                <span class="dl-text" id="dlText">下载壁纸</span>
+            </button>
+        </div>
+
+        <div class="related-section">
+            <div class="section-title">相关推荐</div>
+            <div class="related-scroll" id="relatedScroll"></div>
+        </div>
+
+    </div>
+</main>
+
+<div id="appFooter"></div>
+
+<!-- 提示条 -->
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/common.js"></script>
+<script src="assets/js/download.js"></script>
+</body>
+</html>

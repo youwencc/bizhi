@@ -1,0 +1,825 @@
+/* ============================================================
+   download.css — 下载详情页专属样式（download.html）
+   独立 URL 页面：顶栏由公共组件提供，此处为内容区布局
+   桌面端：左大图（sticky）+ 右信息/下载（独立滚动）双栏
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. 页面双栏骨架
+   ------------------------------------------------------------ */
+.detail-layout {
+    max-width: 1180px;
+    margin: 0 auto;
+    animation: fadeInUp 0.45s ease both;
+}
+
+/* ------------------------------------------------------------
+   2. 大图展示区（设备边框实机演示，纯黑背景突出机身）
+   ------------------------------------------------------------ */
+.detail-hero {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 28px 32px;
+    background: #08080c;
+    overflow: hidden;
+}
+
+/* ---------- 手机机身 ---------- */
+.phone-mockup {
+    position: relative;
+    height: min(58vh, 560px);
+    aspect-ratio: 9 / 19.5;
+    background: linear-gradient(160deg, #2a2a34, #0c0c10);
+    border-radius: 46px;
+    padding: 11px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.07),
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.12),
+        inset 0 0 12px rgba(0, 0, 0, 0.8);
+    animation: heroIn 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+/* 侧键：右电源 / 左音量（渐变分段模拟两颗） */
+.phone-mockup::before {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 24%;
+    width: 3px;
+    height: 11%;
+    border-radius: 0 2px 2px 0;
+    background: #1c1c24;
+}
+
+.phone-mockup::after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 19%;
+    width: 3px;
+    height: 17%;
+    border-radius: 2px 0 0 2px;
+    background: linear-gradient(#1c1c24 0 42%, transparent 42% 58%, #1c1c24 58% 100%);
+}
+
+/* ---------- 屏幕 ---------- */
+.phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--bg-card);
+    isolation: isolate;
+}
+
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---------- 状态栏：时间 + 电池 ---------- */
+.phone-status {
+    position: absolute;
+    top: 13px;
+    left: 20px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #fff;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+}
+
+/* 纯 CSS 电池（80% 电量示意） */
+.phone-battery {
+    position: relative;
+    width: 21px;
+    height: 11px;
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    border-radius: 3.5px;
+    padding: 1.5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
+}
+
+.phone-battery::before {
+    content: '';
+    display: block;
+    width: 78%;
+    height: 100%;
+    border-radius: 1.5px;
+    background: #fff;
+}
+
+.phone-battery::after {
+    content: '';
+    position: absolute;
+    right: -4.5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 4.5px;
+    border-radius: 0 2px 2px 0;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* ---------- 灵动岛 ---------- */
+.phone-island {
+    position: absolute;
+    top: 21px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26%;
+    height: 21px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 3;
+}
+
+.phone-island::after {
+    content: '';
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #16202e, #05070c 70%);
+}
+
+/* ---------- Home 指示条 ---------- */
+.phone-home-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34%;
+    height: 4px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   3. 内容容器
+   ------------------------------------------------------------ */
+.detail-content {
+    display: block;
+    padding-bottom: max(32px, env(safe-area-inset-bottom));
+}
+
+/* ------------------------------------------------------------
+   4. 壁纸信息
+   ------------------------------------------------------------ */
+/* 壁纸描述（后台可配；pre-line 保留后台录入的换行） */
+.detail-desc {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    white-space: pre-line;
+    word-break: break-word;
+}
+.detail-info {
+    padding: 0 20px 20px;
+}
+
+/* 静态下载页主标题为 h1（SEO），动态页为 h2，样式保持一致 */
+.detail-info h1,
+.detail-info h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+}
+
+.detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tag {
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.tag.accent {
+    background: rgba(108, 92, 231, 0.16);
+    color: var(--accent-2);
+}
+
+.detail-stats {
+    display: flex;
+    gap: 22px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.stat-value {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+}
+
+/* ------------------------------------------------------------
+   5. 下载面板
+   ------------------------------------------------------------ */
+.download-panel {
+    margin: 20px;
+    padding: 20px 18px;
+    background: var(--bg-secondary);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.panel-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.panel-sub {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+/* 设备切换 */
+.device-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+}
+
+.device-tab {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: 9px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.device-tab:hover {
+    color: var(--text-primary);
+}
+
+.device-tab.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 尺寸选项 */
+.size-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.size-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 11px 13px;
+    border-radius: 11px;
+    background: var(--bg-primary);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.22s;
+    font-family: inherit;
+    text-align: left;
+}
+
+.size-option:hover {
+    background: var(--bg-card);
+}
+
+.size-option.active {
+    border-color: var(--accent);
+    background: rgba(108, 92, 231, 0.12);
+}
+
+.size-option:active {
+    transform: scale(0.97);
+}
+
+.size-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.size-tag {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.size-option.active .size-tag {
+    background: rgba(108, 92, 231, 0.3);
+    color: var(--accent-2);
+}
+
+/* 下载按钮 */
+.download-btn {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-radius: 14px;
+    border: none;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 22px rgba(108, 92, 231, 0.38);
+    transition: transform 0.18s, box-shadow 0.22s, background 0.3s;
+    letter-spacing: 0.3px;
+}
+
+.download-btn:hover:not(.downloading):not(.done) {
+    box-shadow: 0 8px 28px rgba(108, 92, 231, 0.5);
+}
+
+.download-btn:active:not(.downloading):not(.done) {
+    transform: scale(0.975);
+    box-shadow: 0 3px 12px rgba(108, 92, 231, 0.3);
+}
+
+.download-btn .dl-icon {
+    font-size: 17px;
+    transition: transform 0.3s;
+}
+
+.dl-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: rgba(255, 255, 255, 0.22);
+    transition: width 0.18s linear;
+    pointer-events: none;
+}
+
+.download-btn.downloading {
+    background: var(--accent);
+    cursor: default;
+}
+
+.download-btn.done {
+    background: linear-gradient(135deg, #00b894, #55efc4);
+    box-shadow: 0 6px 22px rgba(0, 184, 148, 0.35);
+    cursor: default;
+}
+
+/* ------------------------------------------------------------
+   6. 相关推荐
+   ------------------------------------------------------------ */
+.related-section {
+    padding: 8px 0 24px;
+}
+
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: '';
+    width: 3px;
+    height: 15px;
+    border-radius: 2px;
+    background: var(--accent-gradient);
+}
+
+.related-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 20px 6px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.related-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.related-card {
+    flex-shrink: 0;
+    width: 116px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
+}
+
+.related-card:hover {
+    transform: translateY(-3px);
+}
+
+.related-card .thumb {
+    width: 116px;
+    height: 206px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-card);
+    margin-bottom: 7px;
+    position: relative;
+}
+
+.related-card .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.related-card .thumb::after {
+    content: '⬇';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.42);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.related-card:hover .thumb::after {
+    opacity: 1;
+}
+
+.related-card .r-title {
+    font-size: 0.72rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 2px;
+}
+
+.related-card .r-meta {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    padding: 2px 2px 0;
+}
+
+/* ------------------------------------------------------------
+   7. 空状态（壁纸不存在 / 已下架）
+   ------------------------------------------------------------ */
+.detail-empty {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+}
+
+.detail-empty .empty-icon {
+    font-size: 56px;
+    opacity: 0.4;
+}
+
+.detail-empty p {
+    font-size: 0.92rem;
+}
+
+.back-home-btn {
+    margin-top: 8px;
+    padding: 10px 28px;
+    border-radius: 22px;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
+    transition: transform 0.18s, box-shadow 0.22s;
+}
+
+.back-home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(108, 92, 231, 0.5);
+}
+
+/* ------------------------------------------------------------
+   7.5 设备演示变体（切换设备 Tab 时预览区联动）
+   　基础结构为手机；.as-tablet / .as-desktop 切换平板 / 显示器外观
+   ------------------------------------------------------------ */
+.phone-mockup {
+    transition: border-radius 0.3s ease, padding 0.3s ease, aspect-ratio 0.35s ease;
+}
+
+/* ---------- 平板（竖屏 iPad 风格） ---------- */
+.phone-mockup.as-tablet {
+    height: min(66vh, 660px);
+    aspect-ratio: 3 / 4;
+    border-radius: 36px;
+    padding: 16px;
+}
+
+.phone-mockup.as-tablet .phone-screen {
+    border-radius: 21px;
+}
+
+/* 前置摄像头点（复用灵动岛元素变形） */
+.phone-mockup.as-tablet .phone-island {
+    display: block;
+    top: 26px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #000;
+}
+
+.phone-mockup.as-tablet .phone-island::after {
+    content: none;
+}
+
+/* 平板边框更宽，状态栏 / Home 条相应内移，避免压在边框上 */
+.phone-mockup.as-tablet .phone-status {
+    top: 26px;
+    left: 30px;
+    right: 28px;
+}
+
+.phone-mockup.as-tablet .phone-home-bar {
+    bottom: 26px;
+    width: 30%;
+}
+
+/* ---------- 桌面显示器 ---------- */
+.phone-mockup.as-desktop {
+    height: auto;
+    width: min(100%, 900px);
+    aspect-ratio: 16 / 10;
+    max-height: calc(100vh - var(--header-h) - 130px);   /* 兜底：异常竖版比例时不破版 */
+    border-radius: 16px;
+    padding: 12px 12px 30px;   /* 底部加宽 = 显示器下巴 */
+    margin-bottom: 48px;       /* 给支架留出空间 */
+}
+
+.phone-mockup.as-desktop .phone-screen {
+    border-radius: 7px;
+}
+
+/* 显示器无灵动岛 / 状态栏 */
+.phone-mockup.as-desktop .phone-island,
+.phone-mockup.as-desktop .phone-status {
+    display: none;
+}
+
+/* 复用 Home 条元素作为下巴品牌点（在下巴 30px 内垂直居中） */
+.phone-mockup.as-desktop .phone-home-bar {
+    display: block;
+    bottom: 11px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3d3d48, #17171d 70%);
+    box-shadow: none;
+}
+
+/* 支架 + 底盘（仅桌面模式渲染） */
+.phone-stand {
+    display: none;
+}
+
+.phone-mockup.as-desktop .phone-stand {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14%;
+    height: 36px;
+    background: linear-gradient(180deg, #191920, #0e0e13);
+    clip-path: polygon(6% 0, 94% 0, 100% 100%, 0 100%);
+}
+
+.phone-mockup.as-desktop .phone-stand::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 230%;
+    height: 9px;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #20202a, #101017);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* 切换设备时的小弹跳 */
+.phone-mockup.pop {
+    animation: heroIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* 桌面端平板演示可以更大 */
+@media (min-width: 1024px) {
+    .phone-mockup.as-tablet {
+        height: min(80vh, 780px);
+    }
+}
+
+/* ------------------------------------------------------------
+   8. 动画
+   ------------------------------------------------------------ */
+@keyframes heroIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ------------------------------------------------------------
+   9. 响应式
+   ------------------------------------------------------------ */
+
+/* ---------- 平板（≥ 640px） ---------- */
+@media (min-width: 640px) {
+    .detail-layout {
+        max-width: 620px;
+    }
+
+    .phone-mockup {
+        height: min(64vh, 620px);
+    }
+
+    .detail-info h1,
+    .detail-info h2 {
+        font-size: 1.45rem;
+    }
+
+    .size-options {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ---------- 桌面端（≥ 1024px）：双栏布局 ---------- */
+@media (min-width: 1024px) {
+    .detail-layout {
+        max-width: 1360px;
+        display: grid;
+        /* 左栏（演示区）弹性占满，右栏（下载信息）收窄为阅读宽度 */
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+        grid-template-areas: "hero content";
+        min-height: calc(100vh - var(--header-h));
+    }
+
+    /* 左栏：大图（粘性，占满首屏） */
+    .detail-hero {
+        grid-area: hero;
+        position: sticky;
+        top: var(--header-h);
+        height: calc(100vh - var(--header-h));
+        padding: 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* 桌面端手机更大（sticky 区域内居中展示，演示区为页面主角） */
+    .phone-mockup {
+        height: min(80vh, 800px);
+    }
+
+    /* 右栏收窄后尺寸选项回 2 列，更从容 */
+    .size-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* 右栏：信息 + 下载 + 推荐（独立滚动） */
+    .detail-content {
+        grid-area: content;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        height: calc(100vh - var(--header-h));
+        padding-bottom: 12px;
+        scrollbar-width: thin;
+    }
+
+    .detail-info {
+        padding: 24px 24px 20px;
+    }
+
+    .detail-info h1,
+    .detail-info h2 {
+        font-size: 1.55rem;
+        margin-bottom: 14px;
+    }
+
+    .detail-stats {
+        gap: 32px;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    .download-panel {
+        margin: 0 22px 24px;
+        padding: 22px 18px;
+    }
+
+    .related-section {
+        padding: 4px 0 28px;
+    }
+
+    .section-title {
+        padding: 0 22px 14px;
+        font-size: 1rem;
+    }
+
+    .related-scroll {
+        padding: 0 22px 8px;
+    }
+
+    .related-card {
+        width: 128px;
+    }
+
+    .related-card .thumb {
+        width: 128px;
+        height: 227px;
+    }
+}
+
+/* ---------- 大桌面（≥ 1440px） ---------- */
+@media (min-width: 1440px) {
+    .detail-layout {
+        max-width: 1520px;
+    }
+}

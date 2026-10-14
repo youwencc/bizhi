@@ -1,0 +1,13 @@
+# 本地文档不上传（部署手册、同步指南等，参考既有惯例）
+*.md
+
+# 系统与工具产物
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code 本地配置
+.claude/
+
+# 旧版 PHP 后台(含默认账号密码),与 workflow 同步排除保持一致,绝不入库
+/admin/
